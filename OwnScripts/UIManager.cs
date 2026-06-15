@@ -51,5 +51,7 @@ public partial class UIManager
     }
 }
 
-
-public partial class UI_MainWin : FairyWindow { }
+namespace Main
+{
+    public partial class UI_MainWin : FairyWindow { }
+}
