@@ -16,10 +16,10 @@ public partial class UIManager
         //UIConfig.defaultFont = "Font2";
         //UIConfig.buttonSound = (NAudioClip)UIPackage.GetItemAssetByURL("ui://Main/buttonEff");
         
-        //MainBinder.BindAll();
+        MainBinder.BindAll();
         
         UIPackage.AddPackage("UI/Main");
-        FGUIUtil.CreateWindow<UI_MainWin>("MainWin");
+        FGUIUtil.CreateWindow<UI_MainWin>("MainWin").Init();
     }
 
     public static List<FairyWindow> windows = new();
