@@ -19,7 +19,7 @@ public partial class UIManager
         MainBinder.BindAll();
         
         UIPackage.AddPackage("UI/Main");
-        FGUIUtil.CreateWindow<UI_MainWin>("MainWin").Init();
+        FGUIUtil.CreateWindow<UI_MainWin>("MainWin");
     }
 
     public static List<FairyWindow> windows = new();
