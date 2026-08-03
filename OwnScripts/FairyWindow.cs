@@ -23,7 +23,7 @@ namespace Main
             bg = GetChild("bg");
 
             btnBack?.onClick.Add(Dispose);
-            bg?.onClick.Add(Dispose);
+            //bg?.onClick.Add(Dispose);
             btnHide?.onClick.Add(Hide);
         }
 

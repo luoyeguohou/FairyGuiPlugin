@@ -31,6 +31,21 @@ public partial class FGUIUtil
         return (T)gcom;
     }
 
+    public static void RefreshAllWindowsLayout()
+    {
+        if (GRoot.inst == null)
+            return;
+
+        GRoot.inst.ApplyContentScaleFactor();
+        foreach (FairyWindow win in UIManager.windows.ToArray())
+        {
+            if (win == null || win.isDisposed)
+                continue;
+
+            win.MakeFullScreen();
+        }
+    }
+
     public static void ClearHint(GObject g)
     {
         g.onRollOver.Clear();

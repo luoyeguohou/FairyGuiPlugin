@@ -6,19 +6,60 @@ using UnityEngine;
 
 public partial class UIManager 
 {
-    public static void Init()
+    public static async void Init()
     {
+        GameSettingUtil.ApplySavedSettings();
         UIPackage.RemoveAllPackages();
 
-        //string fileContent = Resources.Load<TextAsset>("UII18N/"+Cfg.language).text; 
-        //FairyGUI.Utils.XML xml = new(fileContent);
-        //UIPackage.SetStringsSource(xml);
+        ApplyStaticTextLanguage();
+        Msg.Bind((int)MsgID.LanguageChanged, OnLanguageChanged);
         //UIConfig.defaultFont = "Font2";
         //UIConfig.buttonSound = (NAudioClip)UIPackage.GetItemAssetByURL("ui://Main/buttonEff");
-        
+
         MainBinder.BindAll();
         
         UIPackage.AddPackage("UI/Main");
+        await StoryAniUtil.PlayStartStory();
+        FGUIUtil.CreateWindow<UI_MainWin>("MainWin");
+    }
+
+    public static void ApplyStaticTextLanguage()
+    {
+        string resourcePath = "I18N/" + Cfg.language.ToString().ToLowerInvariant();
+        TextAsset textAsset = Resources.Load<TextAsset>(resourcePath);
+        if (textAsset == null)
+        {
+            Debug.LogWarning($"UI i18n resource not found: {resourcePath}");
+            return;
+        }
+
+        FairyGUI.Utils.XML xml = new(textAsset.text);
+        UIPackage.SetStringsSource(xml);
+        ResetPackageTranslationFlags();
+    }
+
+    private static void ResetPackageTranslationFlags()
+    {
+        foreach (UIPackage package in UIPackage.GetPackages())
+        {
+            foreach (PackageItem item in package.GetItems())
+                item.translated = false;
+        }
+    }
+
+    private static void OnLanguageChanged(object[] p)
+    {
+        ApplyStaticTextLanguage();
+        RefreshMainWindowIfVisible();
+    }
+
+    private static void RefreshMainWindowIfVisible()
+    {
+        UI_MainWin mainWin = GetType<UI_MainWin>();
+        if (mainWin == null)
+            return;
+
+        mainWin.Dispose();
         FGUIUtil.CreateWindow<UI_MainWin>("MainWin");
     }
 
