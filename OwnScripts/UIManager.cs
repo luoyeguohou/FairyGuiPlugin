@@ -25,7 +25,7 @@ public partial class UIManager
 
     public static void ApplyStaticTextLanguage()
     {
-        string resourcePath = "I18N/" + Cfg.language.ToString().ToLowerInvariant();
+        string resourcePath = "I18N/" + GameText.language.ToString().ToLowerInvariant();
         TextAsset textAsset = Resources.Load<TextAsset>(resourcePath);
         if (textAsset == null)
         {
