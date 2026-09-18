@@ -39,15 +39,19 @@ public partial class FGUIUtil
     public static T CreateWindow<T>(string name, GComponent layer = null) where T : FairyWindow
     {
         GComponent gcom = UIPackage.CreateObject("Main", name).asCom;
-        (layer ?? UiLayerUtil.DefaultWindowLayer).AddChild(gcom);
+        if (layer == null)
+            GetDefaultWindowLayer(ref layer);
+        (layer ?? GRoot.inst).AddChild(gcom);
         gcom.MakeFullScreen();
 
-        UI_ContentIDWin contentIdWin = UIManager.GetType<UI_ContentIDWin>();
-        if (contentIdWin != null && !contentIdWin.isDisposed && contentIdWin != gcom)
-            GRoot.inst.SetChildIndex(contentIdWin, GRoot.inst.numChildren - 1);
+        OnWindowCreated(gcom);
 
         return (T)gcom;
     }
+
+    static partial void GetDefaultWindowLayer(ref GComponent layer);
+
+    static partial void OnWindowCreated(GComponent gcom);
 
     public static void RefreshAllWindowsLayout()
     {
