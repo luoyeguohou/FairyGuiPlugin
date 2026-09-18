@@ -23,10 +23,23 @@ public partial class FGUIUtil
         SetWorldPos(follower, GetWorldPos(aim));
     }
 
-    public static T CreateWindow<T>(string name) where T : FairyWindow
+    public static Vector2 GetVisualCenterGlobalPosition(GObject obj)
+    {
+        float x = obj.width * 0.5f;
+        float y = obj.height * 0.5f;
+        if (obj.pivotAsAnchor)
+        {
+            x -= obj.width * obj.pivotX;
+            y -= obj.height * obj.pivotY;
+        }
+
+        return obj.LocalToGlobal(new Vector2(x, y));
+    }
+
+    public static T CreateWindow<T>(string name, GComponent layer = null) where T : FairyWindow
     {
         GComponent gcom = UIPackage.CreateObject("Main", name).asCom;
-        GRoot.inst.AddChild(gcom);
+        (layer ?? UiLayerUtil.DefaultWindowLayer).AddChild(gcom);
         gcom.MakeFullScreen();
         return (T)gcom;
     }

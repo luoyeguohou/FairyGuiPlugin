@@ -26,7 +26,7 @@ public partial class UIManager
             return;
 
         mainWin.Dispose();
-        FGUIUtil.CreateWindow<UI_MainWin>("MainWin");
+        FGUIUtil.CreateWindow<UI_MainWin>("MainWin", UiLayerUtil.BaseLayer);
     }
 
     public static List<FairyWindow> windows = new();
