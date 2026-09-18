@@ -41,6 +41,11 @@ public partial class FGUIUtil
         GComponent gcom = UIPackage.CreateObject("Main", name).asCom;
         (layer ?? UiLayerUtil.DefaultWindowLayer).AddChild(gcom);
         gcom.MakeFullScreen();
+
+        UI_ContentIDWin contentIdWin = UIManager.GetType<UI_ContentIDWin>();
+        if (contentIdWin != null && !contentIdWin.isDisposed && contentIdWin != gcom)
+            GRoot.inst.SetChildIndex(contentIdWin, GRoot.inst.numChildren - 1);
+
         return (T)gcom;
     }
 
