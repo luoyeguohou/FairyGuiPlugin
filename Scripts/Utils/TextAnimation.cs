@@ -146,9 +146,14 @@ namespace FairyGUI
             Redraw();
             if ((!revealing || revealEnd <= 0) && !hasEffects)
                 Dispose();
-            else
+            else if (Application.isPlaying)
+            {
                 Timers.inst.AddUpdate(Update);
+                ticking = true;
+            }
         }
+
+        private bool ticking;
 
         private void Update(object unused)
         {
@@ -239,7 +244,7 @@ namespace FairyGUI
         {
             if (disposed) return;
             disposed = true;
-            Timers.inst.Remove(Update);
+            if (ticking) Timers.inst.Remove(Update);
             target.onRemovedFromStage.Remove(OnRemoved);
             TextAnimation.Remove(target, this);
             if (!textField.isDisposed && textField.glyphModifier == ModifyGlyph)
