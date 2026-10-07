@@ -142,6 +142,7 @@ namespace FairyGUI.Utils
                             PushTextFormat();
 
                             _format.size = XMLIterator.GetAttributeInt("size", _format.size);
+                            _format.effectFlags |= XMLIterator.GetAttributeInt("effect", 0);
                             string color = XMLIterator.GetAttribute("color");
                             if (color != null)
                             {

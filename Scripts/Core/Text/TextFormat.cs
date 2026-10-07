@@ -59,6 +59,9 @@ namespace FairyGUI
         /// </summary>
         public bool strikethrough;
 
+        /// <summary>Application-defined inline effects, inherited by nested rich-text styles.</summary>
+        public int effectFlags;
+
         /// <summary>
         /// 
         /// </summary>
@@ -128,6 +131,7 @@ namespace FairyGUI
                 && bold == aFormat.bold && underline == aFormat.underline
                 && italic == aFormat.italic
                 && strikethrough == aFormat.strikethrough
+                && effectFlags == aFormat.effectFlags
                 && gradientColor == aFormat.gradientColor
                 && align == aFormat.align
                 && specialStyle == aFormat.specialStyle;
@@ -148,6 +152,7 @@ namespace FairyGUI
             this.underline = source.underline;
             this.italic = source.italic;
             this.strikethrough = source.strikethrough;
+            this.effectFlags = source.effectFlags;
             if (source.gradientColor != null)
             {
                 this.gradientColor = new Color32[4];

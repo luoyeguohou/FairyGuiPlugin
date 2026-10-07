@@ -40,6 +40,12 @@ namespace FairyGUI
         /// </summary>
         public static NAudioClip buttonSound;
 
+        /// <summary>Optional global click sound resolver, overriding packaged button sounds.</summary>
+        public static Func<GButton, NAudioClip> buttonSoundProvider;
+
+        /// <summary>Optional sound when a pointer enters an enabled button.</summary>
+        public static NAudioClip buttonOverSound;
+
         /// <summary>
         /// Default button click sound volume.
         /// </summary>
@@ -445,6 +451,8 @@ namespace FairyGUI
             UIConfig.verticalScrollBar = null;
             UIConfig.windowModalWaiting = null;
             UIConfig.soundLoader = null;
+            UIConfig.buttonSoundProvider = null;
+            UIConfig.buttonOverSound = null;
         }
 
         public void ApplyModifiedProperties()

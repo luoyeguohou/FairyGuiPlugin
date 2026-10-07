@@ -541,6 +541,8 @@ namespace FairyGUI
 
         private void __rollover()
         {
+            if (!_down && !this.grayed && this.touchable && UIConfig.buttonOverSound?.nativeClip != null)
+                Stage.inst.PlayOneShotSound(UIConfig.buttonOverSound.nativeClip, UIConfig.buttonSoundVolumeScale);
             if (_buttonController == null || !_buttonController.HasPage(OVER))
                 return;
 
@@ -628,8 +630,10 @@ namespace FairyGUI
 
         private void __click()
         {
-            if (sound != null && sound.nativeClip != null)
-                Stage.inst.PlayOneShotSound(sound.nativeClip, soundVolumeScale);
+            NAudioClip clickSound = UIConfig.buttonSoundProvider != null ? UIConfig.buttonSoundProvider(this) : sound;
+            if (!this.grayed && clickSound != null && clickSound.nativeClip != null)
+                Stage.inst.PlayOneShotSound(clickSound.nativeClip,
+                    UIConfig.buttonSoundProvider != null ? UIConfig.buttonSoundVolumeScale : soundVolumeScale);
 
             if (_mode == ButtonMode.Check)
             {

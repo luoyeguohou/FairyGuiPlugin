@@ -11,6 +11,10 @@ namespace FairyGUI
     /// </summary>
     public class TextField : DisplayObject, IMeshFactory
     {
+        /// <summary>Called on fresh glyph vertices before outline/shadow generation.
+        /// Arguments: buffer, first vertex, vertex count, parsed-text index, current format.</summary>
+        public Action<VertexBuffer, int, int, int, TextFormat> glyphModifier;
+
         VertAlignType _verticalAlign;
         TextFormat _textFormat;
         bool _input;
@@ -1233,7 +1237,7 @@ namespace FairyGUI
                                             lineWidth = (clipping ? Mathf.Clamp(posx, GUTTER_X, GUTTER_X + rectWidth) : posx) - underlineStart;
                                         else
                                             lineWidth = underlineStart - (clipping ? Mathf.Clamp(posx, GUTTER_X, GUTTER_X + rectWidth) : posx);
-                                        if (lineWidth > 0)
+                                        if (lineWidth > 0 && glyphModifier == null)
                                             _font.DrawLine(vb, underlineStart < posx ? underlineStart : posx, -(line.y + line.baseline), lineWidth, maxFontSize, 0);
                                     }
                                     maxFontSize = 0;
@@ -1253,7 +1257,7 @@ namespace FairyGUI
                                             lineWidth = (clipping ? Mathf.Clamp(posx, GUTTER_X, GUTTER_X + rectWidth) : posx) - strikethroughStart;
                                         else
                                             lineWidth = strikethroughStart - (clipping ? Mathf.Clamp(posx, GUTTER_X, GUTTER_X + rectWidth) : posx);
-                                        if (lineWidth > 0)
+                                        if (lineWidth > 0 && glyphModifier == null)
                                             _font.DrawLine(vb, strikethroughStart < posx ? strikethroughStart : posx, -(line.y + line.baseline), lineWidth, minFontSize, 1);
                                     }
                                     minFontSize = int.MaxValue;
@@ -1385,7 +1389,16 @@ namespace FairyGUI
                         }
                         charCount++;
 
+                        int glyphStart = vb.currentVertCount;
                         _font.DrawGlyph(vb, posx, -(line.y + line.baseline));
+                        if (glyphModifier != null)
+                        {
+                            if (format.underline)
+                                _font.DrawLine(vb, posx, -(line.y + line.baseline), glyphWidth, maxFontSize, 0);
+                            if (format.strikethrough)
+                                _font.DrawLine(vb, posx, -(line.y + line.baseline), glyphWidth, minFontSize, 1);
+                            glyphModifier(vb, glyphStart, vb.currentVertCount - glyphStart, charIndex, format);
+                        }
 
                         if (_textDirection == RTLSupport.DirectionType.RTL)
                             posx -= letterSpacing;
@@ -1426,7 +1439,7 @@ namespace FairyGUI
                             lineWidth = (clipping ? Mathf.Clamp(posx, GUTTER_X, GUTTER_X + rectWidth) : posx) - underlineStart;
                         else
                             lineWidth = underlineStart - (clipping ? Mathf.Clamp(posx, GUTTER_X, GUTTER_X + rectWidth) : posx);
-                        if (lineWidth > 0)
+                        if (lineWidth > 0 && glyphModifier == null)
                             _font.DrawLine(vb, underlineStart < posx ? underlineStart : posx, -(line.y + line.baseline), lineWidth, maxFontSize, 0);
                     }
 
@@ -1437,7 +1450,7 @@ namespace FairyGUI
                             lineWidth = (clipping ? Mathf.Clamp(posx, GUTTER_X, GUTTER_X + rectWidth) : posx) - strikethroughStart;
                         else
                             lineWidth = strikethroughStart - (clipping ? Mathf.Clamp(posx, GUTTER_X, GUTTER_X + rectWidth) : posx);
-                        if (lineWidth > 0)
+                        if (lineWidth > 0 && glyphModifier == null)
                             _font.DrawLine(vb, strikethroughStart < posx ? strikethroughStart : posx, -(line.y + line.baseline), lineWidth, minFontSize, 1);
                     }
                 }
@@ -1472,9 +1485,9 @@ namespace FairyGUI
             if (_font.customOutline)
             {
                 if (_textFormat.outline != 0)
-                    vb.GenerateOutline(UIConfig.enhancedTextOutlineEffect ? 8 : 4, _textFormat.outline, _textFormat.outlineColor);
+                    vb.GenerateOutline(UIConfig.enhancedTextOutlineEffect ? 8 : 4, _textFormat.outline, _textFormat.outlineColor, glyphModifier != null);
                 if (_textFormat.shadowOffset.x != 0 || _textFormat.shadowOffset.y != 0)
-                    vb.GenerateShadow(_textFormat.shadowOffset, _textFormat.shadowColor);
+                    vb.GenerateShadow(_textFormat.shadowOffset, _textFormat.shadowColor, glyphModifier != null);
             }
 
             vb.AddTriangles();

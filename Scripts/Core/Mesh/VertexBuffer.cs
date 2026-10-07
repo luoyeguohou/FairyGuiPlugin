@@ -445,7 +445,7 @@ namespace FairyGUI
             -1, -1, 1, -1,
             -1, 1, 1, 1
         };
-        public void GenerateOutline(int dirs, float width, Color color)
+        public void GenerateOutline(int dirs, float width, Color color, bool preserveAlpha = false)
         {
             int count = vertices.Count;
             if (count + dirs * count > VerticesLimit)
@@ -461,7 +461,10 @@ namespace FairyGUI
                 {
                     Vector3 vert = vertices[i];
                     vb2.vertices.Add(new Vector3(vert.x + STROKE_OFFSET[j * 2] * width, vert.y + STROKE_OFFSET[j * 2 + 1] * width, 0));
-                    vb2.colors.Add(color);
+                    Color32 outlineColor = color;
+                    if (preserveAlpha)
+                        outlineColor.a = (byte)(outlineColor.a * colors[i].a / 255);
+                    vb2.colors.Add(outlineColor);
                 }
 
                 vb2.uvs.AddRange(uvs);
@@ -472,7 +475,7 @@ namespace FairyGUI
             vb2.End();
         }
 
-        public void GenerateShadow(Vector2 offset, Color color)
+        public void GenerateShadow(Vector2 offset, Color color, bool preserveAlpha = false)
         {
             int count = vertices.Count;
             if (count + count > VerticesLimit)
@@ -486,7 +489,10 @@ namespace FairyGUI
             {
                 Vector3 vert = vertices[i];
                 vb2.vertices.Add(new Vector3(vert.x + offset.x, vert.y - offset.y, 0));
-                vb2.colors.Add(color);
+                Color32 shadowColor = color;
+                if (preserveAlpha)
+                    shadowColor.a = (byte)(shadowColor.a * colors[i].a / 255);
+                vb2.colors.Add(shadowColor);
             }
 
             vb2.uvs.AddRange(uvs);
